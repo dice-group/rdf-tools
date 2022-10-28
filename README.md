@@ -1,5 +1,7 @@
 # rdf-tools
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2b6c3677ac2e4172910081b2b0009b95)](https://www.codacy.com/gh/dice-group/rdf-tools/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dice-group/rdf-tools&amp;utm_campaign=Badge_Grade)
+
 Small RDF helper classes.
 
 ## Modules
