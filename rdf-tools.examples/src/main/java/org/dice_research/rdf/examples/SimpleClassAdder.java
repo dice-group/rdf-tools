@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -37,9 +38,9 @@ public class SimpleClassAdder  implements Function<Triple, Stream<Triple>>  {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleClassAdder.class);
 
-    protected Map<String, ArrayList<String>> classHierarchy;
+    protected Map<String, ? extends Collection<String>> classHierarchy;
 
-    public SimpleClassAdder(Map<String, ArrayList<String>> classHierarchy) {
+    public SimpleClassAdder(Map<String, ? extends Collection<String>> classHierarchy) {
         this.classHierarchy = classHierarchy;
     }
 

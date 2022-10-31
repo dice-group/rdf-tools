@@ -2,9 +2,9 @@ package org.dice_research.rdf.examples;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -19,10 +19,10 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 
 public class DRBasedClassAdder implements Function<Triple, Stream<Triple>> {
 
-    protected Map<String, Set<String>> domainInfo;
-    protected Map<String, Set<String>> rangeInfo;
+    protected Map<String, ? extends Collection<String>> domainInfo;
+    protected Map<String, ? extends Collection<String>> rangeInfo;
 
-    public DRBasedClassAdder(Map<String, Set<String>> domainInfo, Map<String, Set<String>> rangeInfo) {
+    public DRBasedClassAdder(Map<String, ? extends Collection<String>> domainInfo, Map<String, ? extends Collection<String>> rangeInfo) {
         this.domainInfo = domainInfo;
         this.rangeInfo = rangeInfo;
     }
