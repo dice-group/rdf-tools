@@ -1,4 +1,4 @@
-package org.dice_research.rdf.stream.consum;
+package org.dice_research.rdf.stream.consume;
 
 import java.util.function.Consumer;
 
