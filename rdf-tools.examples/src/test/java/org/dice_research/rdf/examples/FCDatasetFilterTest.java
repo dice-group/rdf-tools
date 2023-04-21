@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.dice_research.rdf.test.ModelComparisonHelper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -23,8 +21,6 @@ public class FCDatasetFilterTest {
         FCDatasetFilter.main(
                 new String[] { oldFile.getAbsolutePath(), largeFile.getAbsolutePath(), resultFile.getAbsolutePath() });
 
-        Model expectedModel = ModelFactory.createDefaultModel();
-        expectedModel.read(expectedNewFile.getAbsolutePath());
         ModelComparisonHelper.assertModelsEqual(expectedNewFile.toURI().toURL(), resultFile.toURI().toURL());
     }
 
@@ -34,7 +30,7 @@ public class FCDatasetFilterTest {
         try {
             return new File(url.toURI());
         } catch (URISyntaxException e) {
-            throw new RuntimeException("Got an unexpected error while processing a resource name.", e);
+            throw new IllegalArgumentException("Got an unexpected error while processing the given resource name.", e);
         }
     }
 }

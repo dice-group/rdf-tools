@@ -16,7 +16,6 @@
  */
 package org.dice_research.rdf.test;
 
-import java.io.File;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
