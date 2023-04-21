@@ -4,8 +4,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import org.apache.jena.atlas.lib.ProgressMonitor;
@@ -14,9 +12,7 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.ProgressStreamRDF;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFLib;
-import org.apache.jena.vocabulary.RDF;
 import org.dice_research.rdf.stream.collect.RDFStreamCollector;
-import org.dice_research.rdf.stream.collect.RDFStreamGroupByCollector;
 import org.dice_research.rdf.stream.filter.NodeFilterBasedTripleFilter;
 import org.dice_research.rdf.stream.filter.RDFStreamTripleFilter;
 import org.slf4j.Logger;
@@ -96,108 +92,4 @@ public class FCDatasetFilter {
         return trueStmts;
     }
 
-    public static void groupStmtsByPredicate(String inputFile, Map<String, Set<String>> stmtsByPredicate) {
-        // We collect the IRI of the subject (i.e., the statement IRI) and group these
-        // IRIs by objects (i.e., the property of the statement) assuming that we only
-        // see triples with rdf:predicate as predicate.
-        StreamRDF stream = new RDFStreamGroupByCollector<>(t -> t.getObject().getURI(), t -> t.getSubject().getURI(),
-                HashSet::new, stmtsByPredicate);
-        // Hence, we should make sure that we only have rdf:predicate triples
-        final String RDF_PREDICATE_IRI = RDF.predicate.getURI();
-        stream = new RDFStreamTripleFilter(t -> RDF_PREDICATE_IRI.equals(t.getPredicate().getURI()), stream);
-
-        // Add monitor at the beginning of the stream
-        ProgressMonitor monitorS = ProgressMonitor.create(LOGGER, "Processed triples", 1000, 10);
-        stream = new ProgressStreamRDF(stream, monitorS);
-
-        LOGGER.info("Streaming data to analyze predicates...");
-        // Start reading triples from the input file
-        monitorS.start();
-        stream.start();
-        RDFDataMgr.parse(stream, inputFile, Lang.NT);
-        monitorS.finish();
-        stream.finish();
-    }
-
-    public static Set<String> selectTestStmts(Map<String, Set<String>> stmtsByPredicate, int testFileSize, long seed) {
-        Set<String> excludedPredicates = new HashSet<String>();
-        Set<String> stmts;
-        int predicateCount = 0;
-        int statementCount = 0;
-        for (String predicate : stmtsByPredicate.keySet()) {
-            stmts = stmtsByPredicate.get(predicate);
-            // Exclude predicates that occur only once
-            if (stmts.size() <= 1) {
-                excludedPredicates.add(predicate);
-            } else {
-                ++predicateCount;
-                statementCount += stmts.size();
-            }
-        }
-        // calculate the number of training examples that have to be selected
-        int maximumTestSize = statementCount - predicateCount;
-        if (maximumTestSize < testFileSize) {
-            throw new IllegalArgumentException(
-                    "The given test file size is too high. The maximum test file size is " + maximumTestSize + ".");
-        }
-        // Select test statements randomly
-        Set<String> selectedStmts = new HashSet<String>();
-        boolean first;
-        Random random = new Random(seed);
-        for (String predicate : stmtsByPredicate.keySet()) {
-            if (!excludedPredicates.contains(predicate)) {
-                stmts = stmtsByPredicate.get(predicate);
-                first = true;
-                for (String stmt : stmts) {
-                    // the first statement is always a training statement
-                    if (first) {
-                        first = false;
-                    } else {
-                        // Randomly select whether this statement is a training or test statement
-                        if (random.nextInt(maximumTestSize) < testFileSize) {
-                            // Add it to the set of test statements
-                            selectedStmts.add(stmt);
-                            --testFileSize;
-                        }
-                        --maximumTestSize;
-                    }
-                }
-            }
-        }
-        return selectedStmts;
-    }
-
-    public static void splitInputFile(String inputFile, String selectedFile, String otherFile,
-            Set<String> selectedStmts) throws IOException {
-        splitInputFile(inputFile, selectedFile, otherFile, selectedStmts, false);
-    }
-
-    public static void splitInputFile(String inputFile, String selectedFile, String otherFile,
-            Set<String> selectedStmts, boolean append) throws IOException {
-
-        try (Writer outSelected = new FileWriter(selectedFile, append);
-                Writer outOther = new FileWriter(otherFile, append)) {
-            // Create stream starting from the end!
-            StreamRDF selectedStream = StreamRDFLib.writer(outSelected);
-            StreamRDF otherStream = StreamRDFLib.writer(outOther);
-
-            // Split stream based on whether a statement (i.e., the subject) has been
-            // selected or not
-            StreamRDF stream = new RDFStreamTripleFilter(
-                    new NodeFilterBasedTripleFilter(s -> s.isURI() && selectedStmts.contains(s.getURI()), null, null),
-                    selectedStream, otherStream);
-
-            // Add monitor at the beginning of the stream
-            ProgressMonitor monitorS = ProgressMonitor.create(LOGGER, "Processed triples", 1000, 10);
-            stream = new ProgressStreamRDF(stream, monitorS);
-
-            LOGGER.info("Streaming data to split into two files...");
-            // Start reading triples from the input file
-            monitorS.start();
-            stream.start();
-            RDFDataMgr.parse(stream, inputFile, Lang.NT);
-            monitorS.finish();
-            stream.finish();
-        }
-    }
 }
