@@ -16,11 +16,14 @@
  */
 package org.dice_research.rdf.test;
 
+import java.io.File;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
@@ -34,8 +37,52 @@ import org.junit.Assert;
  *
  */
 public class ModelComparisonHelper {
-    
+
+    /**
+     * This method compares the given result model with the given expected model. It
+     * uses the {@link Assert} class for the comparison.
+     * 
+     * @param expected the URL from which the expected RDF model can be loaded
+     * @param result   the actual RDF model which should be compared to the expected
+     *                 model
+     */
+    public static void assertModelsEqual(URL expected, Model result) {
+        assertModelsEqual(loadModel(expected), result);
+    }
+
+    /**
+     * This method compares the given result model with the given expected model. It
+     * uses the {@link Assert} class for the comparison.
+     * 
+     * @param expected the expected RDF model
+     * @param result   the URL from which the actual RDF model can be loaded
+     */
+    public static void assertModelsEqual(Model expected, URL result) {
+        assertModelsEqual(expected, loadModel(result));
+    }
+
+    /**
+     * This method compares the given result model with the given expected model. It
+     * uses the {@link Assert} class for the comparison.
+     * 
+     * @param expected the URL from which the expected RDF model can be loaded
+     * @param result   the URL from which the actual RDF model can be loaded
+     */
+    public static void assertModelsEqual(URL expected, URL result) {
+        assertModelsEqual(loadModel(expected), loadModel(result));
+    }
+
+    /**
+     * This method compares the given result model with the given expected model. It
+     * uses the {@link Assert} class for the comparison.
+     * 
+     * @param expected the expected RDF model
+     * @param result   the actual RDF model which should be compared to the expected
+     *                 model
+     */
     public static void assertModelsEqual(Model expected, Model result) {
+        Assert.assertNotNull("The given expected model is null.", expected);
+        Assert.assertNotNull("The given result model is null.", result);
         // Compare the models
         String expectedModelString = expected.toString();
         String resultModelString = result.toString();
@@ -61,14 +108,11 @@ public class ModelComparisonHelper {
     }
 
     /**
-     * Collects statements that can be found in model A but not in model B. If A
-     * and B are seen as sets of statements, this method returns the difference
-     * A\B.
+     * Collects statements that can be found in model A but not in model B. If A and
+     * B are seen as sets of statements, this method returns the difference A\B.
      *
-     * @param modelA
-     *            the model that should be fully contained inside model B.
-     * @param modelB
-     *            the model that should fully contain model A.
+     * @param modelA the model that should be fully contained inside model B.
+     * @param modelB the model that should fully contain model A.
      * @return the difference A\B which is empty if A is a subset of B
      */
     public static Set<Statement> getMissingStatements(Model modelA, Model modelB) {
@@ -85,14 +129,12 @@ public class ModelComparisonHelper {
     }
 
     /**
-     * Checks whether the given statement can be found in the given model. If
-     * the given statement contains blank nodes (= Anon nodes) they are replaced
-     * by variables.
+     * Checks whether the given statement can be found in the given model. If the
+     * given statement contains blank nodes (= Anon nodes) they are replaced by
+     * variables.
      *
-     * @param model
-     *            the model that might contain the given statement
-     * @param s
-     *            the statement which could be contained in the given model
+     * @param model the model that might contain the given statement
+     * @param s     the statement which could be contained in the given model
      * @return <code>true</code> if the statement can be found in the model,
      *         <code>false</code> otherwise
      */
@@ -112,6 +154,18 @@ public class ModelComparisonHelper {
                 return model.contains(subject, s.getPredicate(), object);
             }
         }
+    }
+
+    /**
+     * Tries to load the model from the given URL.
+     * 
+     * @param url the location of the RDF model that should be loaded
+     * @return the model that could be loaded
+     */
+    public static Model loadModel(URL url) {
+        Model model = ModelFactory.createDefaultModel();
+        model.read(url.toString());
+        return model;
     }
 
 }

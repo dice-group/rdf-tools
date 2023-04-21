@@ -1,0 +1,5 @@
+<http://swc2017.aksw.org/task2/dataset/fb_domain-2269> <http://swc2017.aksw.org/hasTruthValue> "0.0"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://swc2017.aksw.org/task2/dataset/fb_domain-2269> <http://www.w3.org/1999/02/22-rdf-syntax-ns#object> <http://dbpedia.org/resource/Seth_Green> .
+<http://swc2017.aksw.org/task2/dataset/fb_domain-2269> <http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate> <http://dbpedia.org/ontology/starring> .
+<http://swc2017.aksw.org/task2/dataset/fb_domain-2269> <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject> <http://dbpedia.org/resource/Kill_Bill> .
+<http://swc2017.aksw.org/task2/dataset/fb_domain-2269> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
