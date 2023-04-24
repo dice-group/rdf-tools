@@ -1,0 +1,22 @@
+<http://example.org/FC2ReifiedConverterTest/birth_51.ttl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
+<http://example.org/FC2ReifiedConverterTest/birth_51.ttl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject> <http://dbpedia.org/resource/Ambrose> .
+<http://example.org/FC2ReifiedConverterTest/birth_51.ttl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate> <http://dbpedia.org/ontology/birthPlace> .
+<http://example.org/FC2ReifiedConverterTest/birth_51.ttl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#object> <http://dbpedia.org/resource/Trier> .
+<http://example.org/FC2ReifiedConverterTest/birth_51.ttl> <http://swc2017.aksw.org/hasTruthValue> "1.0"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://example.org/FC2ReifiedConverterTest/birth_52.ttl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
+<http://example.org/FC2ReifiedConverterTest/birth_52.ttl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject> <http://dbpedia.org/resource/John_von_Neumann> .
+<http://example.org/FC2ReifiedConverterTest/birth_52.ttl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate> <http://dbpedia.org/ontology/birthPlace> .
+<http://example.org/FC2ReifiedConverterTest/birth_52.ttl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#object> <http://dbpedia.org/resource/Budapest> .
+<http://example.org/FC2ReifiedConverterTest/birth_52.ttl> <http://swc2017.aksw.org/hasTruthValue> "1.0"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://example.org/FC2ReifiedConverterTest/birth_154.ttl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
+<http://example.org/FC2ReifiedConverterTest/birth_154.ttl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject> <http://dbpedia.org/resource/Ambrose> .
+<http://example.org/FC2ReifiedConverterTest/birth_154.ttl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate> <http://dbpedia.org/ontology/birthPlace> .
+<http://example.org/FC2ReifiedConverterTest/birth_154.ttl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#object> <http://dbpedia.org/resource/Milan> .
+<http://example.org/FC2ReifiedConverterTest/birth_154.ttl> <http://swc2017.aksw.org/hasTruthValue> "0.0"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://example.org/FC2ReifiedConverterTest/birth_155.ttl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
+<http://example.org/FC2ReifiedConverterTest/birth_155.ttl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject> <http://dbpedia.org/resource/John_von_Neumann> .
+<http://example.org/FC2ReifiedConverterTest/birth_155.ttl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate> <http://dbpedia.org/ontology/birthPlace> .
+<http://example.org/FC2ReifiedConverterTest/birth_155.ttl> <http://www.w3.org/1999/02/22-rdf-syntax-ns#object> <http://dbpedia.org/resource/Washington,_D.C.> .
+<http://example.org/FC2ReifiedConverterTest/birth_155.ttl> <http://swc2017.aksw.org/hasTruthValue> "0.0"^^<http://www.w3.org/2001/XMLSchema#double> .
+
+
