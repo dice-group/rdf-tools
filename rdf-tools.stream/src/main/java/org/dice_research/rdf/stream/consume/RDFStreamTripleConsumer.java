@@ -3,32 +3,26 @@ package org.dice_research.rdf.stream.consume;
 import java.util.function.Consumer;
 
 import org.apache.jena.graph.Triple;
-import org.apache.jena.riot.system.StreamRDFBase;
-import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.riot.system.StreamRDFApply;
 
 /**
  * This class can be used to let the given {@link Consumer} consume triples from
- * an RDF stream.
+ * an RDF stream. This class is actually just a simplification of the
+ * {@link StreamRDFApply} class that transforms all quads in a stream to triples
+ * before applying the given consumer.
  * 
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
-public class RDFStreamTripleConsumer extends StreamRDFBase {
+public class RDFStreamTripleConsumer extends StreamRDFApply {
 
-    private Consumer<Triple> consumer;
-
+    /**
+     * Constructor.
+     * 
+     * @param consumer the {@link Consumer} that is applied to every triple on the
+     *                 stream.
+     */
     public RDFStreamTripleConsumer(Consumer<Triple> consumer) {
-        super();
-        this.consumer = consumer;
-    }
-
-    @Override
-    public void triple(Triple triple) {
-        consumer.accept(triple);
-    }
-
-    @Override
-    public void quad(Quad quad) {
-        triple(quad.asTriple());
+        super(consumer, q -> consumer.accept(q.asTriple()));
     }
 }
