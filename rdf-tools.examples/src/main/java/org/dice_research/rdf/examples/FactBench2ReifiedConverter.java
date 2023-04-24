@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 public class FactBench2ReifiedConverter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CSV2FCDatasetConverter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FactBench2ReifiedConverter.class);
 
     private static final Resource VERACITY_PROPERTY = ResourceFactory
             .createResource("http://swc2017.aksw.org/hasTruthValue");
