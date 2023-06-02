@@ -11,16 +11,20 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import org.apache.jena.atlas.lib.ProgressMonitor;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.system.ProgressStreamRDF;
+import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDF2;
 import org.apache.jena.riot.system.StreamRDFLib;
+import org.apache.jena.system.progress.MonitorOutputs;
+import org.apache.jena.system.progress.ProgressMonitor;
+import org.apache.jena.system.progress.ProgressMonitorBasic;
+import org.apache.jena.system.progress.ProgressMonitorOutput;
+import org.apache.jena.system.progress.ProgressStreamRDF;
 import org.apache.jena.vocabulary.RDF;
 import org.dice_research.rdf.stream.filter.NodeFilterBasedTripleFilter;
 import org.dice_research.rdf.stream.filter.RDFStreamTripleFilter;
@@ -34,7 +38,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-public class SimpleClassAdder  implements Function<Triple, Stream<Triple>>  {
+public class SimpleClassAdder implements Function<Triple, Stream<Triple>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleClassAdder.class);
 
@@ -60,7 +64,8 @@ public class SimpleClassAdder  implements Function<Triple, Stream<Triple>>  {
 
     public static void main(String[] args) throws IOException {
         if (args.length < 3) {
-            LOGGER.error("Wrong usage! GlistenClassAdder <input-file> <class-map-file> <domain-range-map-file> <output-file>");
+            LOGGER.error(
+                    "Wrong usage! GlistenClassAdder <input-file> <class-map-file> <domain-range-map-file> <output-file>");
             return;
         }
         String inputFile = args[0];
@@ -74,7 +79,8 @@ public class SimpleClassAdder  implements Function<Triple, Stream<Triple>>  {
         try (Writer out1 = new FileWriter(outputFile)) {
             // Create stream starting from the end!
             StreamRDF outStream = StreamRDFLib.writer(out1);
-            ProgressMonitor monitor1 = ProgressMonitor.create(LOGGER, "Added triples", 100000, 10);
+            ProgressMonitor monitor1 = new ProgressMonitorOutput("Added triples", 100000, 10,
+                    MonitorOutputs.outputToLog(LOGGER));
             outStream = new ProgressStreamRDF(outStream, monitor1);
 
             // First stream, extend existing or newly created rdf:type statements with super
@@ -102,14 +108,15 @@ public class SimpleClassAdder  implements Function<Triple, Stream<Triple>>  {
                     typeStream, drStream);
 
             // Add monitor at the beginning of the stream
-            ProgressMonitor monitorS = ProgressMonitor.create(LOGGER, "Processed triples", 100000, 10);
+            ProgressMonitor monitorS = new ProgressMonitorOutput("Processed triples", 100000, 10,
+                    MonitorOutputs.outputToLog(LOGGER));
             stream = new ProgressStreamRDF(stream, monitorS);
 
             // Start reading triples from the input file
             monitorS.start();
             monitor1.start();
             stream.start();
-            RDFDataMgr.parse(stream, inputFile, Lang.NT);
+            RDFParser.source(inputFile).lang(Lang.NT).parse(stream);
             monitorS.finish();
             monitor1.finish();
             stream.finish();

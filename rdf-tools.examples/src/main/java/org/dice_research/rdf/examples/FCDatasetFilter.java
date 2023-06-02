@@ -6,12 +6,15 @@ import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.jena.atlas.lib.ProgressMonitor;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.system.ProgressStreamRDF;
+import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFLib;
+import org.apache.jena.system.progress.MonitorOutputs;
+import org.apache.jena.system.progress.ProgressMonitor;
+import org.apache.jena.system.progress.ProgressMonitorOutput;
+import org.apache.jena.system.progress.ProgressStreamRDF;
 import org.dice_research.rdf.stream.collect.RDFStreamCollector;
 import org.dice_research.rdf.stream.filter.NodeFilterBasedTripleFilter;
 import org.dice_research.rdf.stream.filter.RDFStreamTripleFilter;
@@ -57,14 +60,15 @@ public class FCDatasetFilter {
                     selectedStream);
 
             // Add monitor at the beginning of the stream
-            ProgressMonitor monitorS = ProgressMonitor.create(LOGGER, "Processed triples", 1000, 10);
+            ProgressMonitor monitorS = new ProgressMonitorOutput("Processed triples", 1000, 10,
+                    MonitorOutputs.outputToLog(LOGGER));
             stream = new ProgressStreamRDF(stream, monitorS);
 
             LOGGER.info("Streaming data to get updated statements...");
             // Start reading triples from the input file
             monitorS.start();
             stream.start();
-            RDFDataMgr.parse(stream, largeFile, Lang.NT);
+            RDFParser.source(largeFile).lang(Lang.NT).parse(stream);
             monitorS.finish();
             stream.finish();
         }
@@ -78,14 +82,15 @@ public class FCDatasetFilter {
         StreamRDF stream = new RDFStreamCollector<String>(t -> t.getSubject().getURI(), trueStmts);
 
         // Add monitor at the beginning of the stream
-        ProgressMonitor monitorS = ProgressMonitor.create(LOGGER, "Processed triples", 1000, 10);
+        ProgressMonitor monitorS = new ProgressMonitorOutput("Processed triples", 1000, 10,
+                MonitorOutputs.outputToLog(LOGGER));
         stream = new ProgressStreamRDF(stream, monitorS);
 
         LOGGER.info("Streaming data to select statement IRIs...");
         // Start reading triples from the input file
         monitorS.start();
         stream.start();
-        RDFDataMgr.parse(stream, inputFile, Lang.NT);
+        RDFParser.source(inputFile).lang(Lang.NT).parse(stream);
         monitorS.finish();
         stream.finish();
 

@@ -7,11 +7,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.jena.atlas.lib.ProgressMonitor;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.system.ProgressStreamRDF;
+import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.system.StreamRDF;
+import org.apache.jena.system.progress.MonitorOutputs;
+import org.apache.jena.system.progress.ProgressMonitor;
+import org.apache.jena.system.progress.ProgressMonitorOutput;
+import org.apache.jena.system.progress.ProgressStreamRDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.dice_research.rdf.stream.collect.RDFStreamGroupByCollector;
 import org.dice_research.rdf.stream.filter.RDFStreamTripleFilter;
@@ -93,14 +95,15 @@ public class ClassHierarchyCollector {
         StreamRDF stream = createStream(classHierarchy);
 
         // Add monitor at the beginning of the stream
-        ProgressMonitor monitorS = ProgressMonitor.create(LOGGER, "Processed triples", 100000, 10);
+        ProgressMonitor monitorS = new ProgressMonitorOutput("Processed triples", 100000, 10,
+                MonitorOutputs.outputToLog(LOGGER));
         stream = new ProgressStreamRDF(stream, monitorS);
 
         LOGGER.info("Streaming data...");
         // Start reading triples from the input file
         monitorS.start();
         stream.start();
-        RDFDataMgr.parse(stream, inputFile, Lang.NT);
+        RDFParser.source(inputFile).lang(Lang.NT).parse(stream);
         monitorS.finish();
         stream.finish();
 

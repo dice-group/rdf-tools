@@ -22,7 +22,8 @@ public class DRBasedClassAdder implements Function<Triple, Stream<Triple>> {
     protected Map<String, ? extends Collection<String>> domainInfo;
     protected Map<String, ? extends Collection<String>> rangeInfo;
 
-    public DRBasedClassAdder(Map<String, ? extends Collection<String>> domainInfo, Map<String, ? extends Collection<String>> rangeInfo) {
+    public DRBasedClassAdder(Map<String, ? extends Collection<String>> domainInfo,
+            Map<String, ? extends Collection<String>> rangeInfo) {
         this.domainInfo = domainInfo;
         this.rangeInfo = rangeInfo;
     }
@@ -36,17 +37,17 @@ public class DRBasedClassAdder implements Function<Triple, Stream<Triple>> {
             Stream<Triple> result;
             // Generate a stream of classes for the subject
             result = domainInfo.get(predicate).stream().map(NodeFactory::createURI)
-                    .map(c -> new Triple(subject, RDF.type.asNode(), c));
+                    .map(c -> Triple.create(subject, RDF.type.asNode(), c));
             if (!object.isLiteral() && rangeInfo.containsKey(predicate)) {
                 // Generate a stream of classes for the object
                 result = Stream.concat(result, rangeInfo.get(predicate).stream().map(NodeFactory::createURI)
-                        .map(c -> new Triple(object, RDF.type.asNode(), c)));
+                        .map(c -> Triple.create(object, RDF.type.asNode(), c)));
             }
             return result;
         } else {
             if (!object.isLiteral() && rangeInfo.containsKey(predicate)) {
                 return rangeInfo.get(predicate).stream().map(NodeFactory::createURI)
-                        .map(c -> new Triple(object, RDF.type.asNode(), c));
+                        .map(c -> Triple.create(object, RDF.type.asNode(), c));
             }
         }
         return Stream.empty();
