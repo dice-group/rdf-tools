@@ -11,19 +11,25 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
-import org.apache.jena.query.Syntax;
+import org.apache.jena.query.ParameterizedSparqlString;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.sparql.modify.request.QuadAcc;
 import org.apache.jena.sparql.modify.request.UpdateDeleteInsert;
-import org.apache.jena.sparql.serializer.QuerySerializer;
-import org.apache.jena.sparql.serializer.QuerySerializerFactory;
-import org.apache.jena.sparql.serializer.SerializerRegistry;
+import org.apache.jena.update.UpdateFactory;
+import org.apache.jena.update.UpdateRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class offers some helpful methods to load queries from a resource or to
+ * get an update query from model differences.
+ * 
+ * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
+ *
+ */
 public class SparqlQueryUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SparqlQueryUtils.class);
@@ -43,8 +49,8 @@ public class SparqlQueryUtils {
      * @param loader       the class loader that should be used to access the
      *                     resource
      * @param resourceName name of the resource that should be loaded
-     * @param the          charset that should be used to read the query from the
-     *                     resource
+     * @param charset      the charset that should be used to read the query from
+     *                     the resource
      * @return the resource as String or <code>null</code> if an error occurs
      */
     public static final String loadQuery(ClassLoader loader, String resourceName, Charset charset) {
@@ -61,6 +67,23 @@ public class SparqlQueryUtils {
             LOGGER.error("Couldn't find needed resource \"" + resourceName + "\". Returning null.");
         }
         return null;
+    }
+
+    /**
+     * Loads the given resource, e.g., a SPARQL query, as
+     * {@link ParameterizedSparqlString}.
+     *
+     * @param loader       the class loader that should be used to access the
+     *                     resource
+     * @param resourceName name of the resource that should be loaded
+     * @param charset      the charset that should be used to read the query from
+     *                     the resource
+     * @return the resource as String or <code>null</code> if an error occurs
+     */
+    public static final ParameterizedSparqlString loadParameterizedQuery(ClassLoader loader, String resourceName,
+            Charset charset) {
+        String query = loadQuery(loader, resourceName, charset);
+        return query == null ? null : new ParameterizedSparqlString(query);
     }
 
     /**
@@ -104,7 +127,12 @@ public class SparqlQueryUtils {
      *                     holders.
      * @return the newly created query or <code>null</code> if the given query was
      *         <code>null</code>.
+     * 
+     * @deprecated We recommend to use the {@link ParameterizedSparqlString} instead
+     *             (e.g., by loading the query with
+     *             {@link #loadParameterizedQuery(ClassLoader, String, Charset)}).
      */
+    @Deprecated
     public static final String replacePlaceholders(String query, String[] placeholders, String[] replacements) {
         if (query == null) {
             return null;
@@ -192,8 +220,10 @@ public class SparqlQueryUtils {
         while (iterator.hasNext()) {
             quads.addTriple(iterator.next().asTriple());
         }
-        
-        return update.toString(); // TODO: Check whether this really works as expected
+
+        UpdateRequest request = UpdateFactory.create();
+        request.add(update);
+        return request.toString();
     }
 
     /**

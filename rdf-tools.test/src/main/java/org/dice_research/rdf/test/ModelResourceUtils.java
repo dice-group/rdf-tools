@@ -46,7 +46,7 @@ public class ModelResourceUtils {
      */
     public static void loadModel(Model model, ClassLoader loader, String resourceName, Lang rdfLanguage) {
         try (InputStream is = AbstractQueryTest.class.getClassLoader().getResourceAsStream(resourceName)) {
-            Assert.assertNotNull(is);
+            Assert.assertNotNull("Couldn't load " + resourceName + " as resource.", is);
             RDFDataMgr.read(model, is, rdfLanguage);
         } catch (Throwable t) {
             throw new IllegalStateException("Got an exception while loading model from \"" + resourceName + "\".", t);
