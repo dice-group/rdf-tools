@@ -70,7 +70,7 @@ public class ModelHelper {
         while (stmtIter.hasNext()) {
             oldStatement = stmtIter.next();
             // Add new triple
-            model.add(oldStatement.getSubject(), oldStatement.getPredicate(), oldObject);
+            model.add(oldStatement.getSubject(), oldStatement.getPredicate(), newObject);
             // Add old triple to the list of triples that need to be removed
             toRemove.add(oldStatement);
         }
