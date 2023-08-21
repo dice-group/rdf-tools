@@ -52,12 +52,6 @@ public class SparqlQueryUtilsUpdateFromDiffTest extends UpdateQueryTest {
                 "org/dice_research/sparql/exampleChallengeConfig.ttl", Lang.TURTLE,
                 new String[] { SparqlQueryUtils.getUpdateQueryFromDiff(original, updated, SECOND_GRAPH_NAME) } });
         /*
-         * A query that should DELETE and INSERT something does not change an empty
-         * graph.
-         */
-        testConfigs.add(new Object[] { FIRST_GRAPH_NAME, SECOND_GRAPH_NAME, null, null, null, null,
-                new String[] { SparqlQueryUtils.getUpdateQueryFromDiff(original, updated, FIRST_GRAPH_NAME) } });
-        /*
          * The original model is changed to the updated model as expected with the
          * possibility to create multiple queries.
          */

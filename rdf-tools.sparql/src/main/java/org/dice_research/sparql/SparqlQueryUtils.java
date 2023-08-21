@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -16,8 +15,10 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.shared.PrefixMapping;
-import org.apache.jena.sparql.modify.request.QuadAcc;
-import org.apache.jena.sparql.modify.request.UpdateDeleteInsert;
+import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.modify.request.QuadDataAcc;
+import org.apache.jena.sparql.modify.request.UpdateDataDelete;
+import org.apache.jena.sparql.modify.request.UpdateDataInsert;
 import org.apache.jena.update.UpdateFactory;
 import org.apache.jena.update.UpdateRequest;
 import org.slf4j.Logger;
@@ -199,31 +200,60 @@ public class SparqlQueryUtils {
      */
     public static final String getUpdateQueryFromStatements(List<Statement> deleted, List<Statement> inserted,
             PrefixMapping mapping, String graphUri) {
-        UpdateDeleteInsert update = new UpdateDeleteInsert();
-        Node graph = null;
-        if (graphUri != null) {
-            graph = NodeFactory.createURI(graphUri);
-            update.setWithIRI(graph);
-        }
-        Iterator<Statement> iterator;
-
-        // deleted statements
-        iterator = deleted.iterator();
-        QuadAcc quads = update.getDeleteAcc();
-        while (iterator.hasNext()) {
-            quads.addTriple(iterator.next().asTriple());
-        }
-
-        // inserted statements
-        iterator = inserted.iterator();
-        quads = update.getInsertAcc();
-        while (iterator.hasNext()) {
-            quads.addTriple(iterator.next().asTriple());
-        }
-
         UpdateRequest request = UpdateFactory.create();
-        request.add(update);
+        if ((inserted != null) && (!inserted.isEmpty())) {
+            QuadDataAcc data = new QuadDataAcc();
+            addStmtsToQuadList(inserted, graphUri, data);
+            request.add(new UpdateDataInsert(data));
+        }
+        if ((deleted != null) && (!deleted.isEmpty())) {
+            QuadDataAcc data = new QuadDataAcc();
+            addStmtsToQuadList(deleted, graphUri, data);
+            request.add(new UpdateDataDelete(data));
+        }
         return request.toString();
+        /*
+         * Faulty approach that uses INSERT and DELETE with an empty WHERE clause.
+         * However, that does not always work with all triple stores.
+         */
+//        UpdateDeleteInsert update = new UpdateDeleteInsert();
+//        Node graph = null;
+//        if (graphUri != null) {
+//            graph = NodeFactory.createURI(graphUri);
+//            update.setWithIRI(graph);
+//        }
+//        Iterator<Statement> iterator;
+//
+//        // deleted statements
+//        iterator = deleted.iterator();
+//        QuadAcc quads = update.getDeleteAcc();
+//        while (iterator.hasNext()) {
+//            quads.addTriple(iterator.next().asTriple());
+//        }
+//
+//        // inserted statements
+//        iterator = inserted.iterator();
+//        quads = update.getInsertAcc();
+//        while (iterator.hasNext()) {
+//            quads.addTriple(iterator.next().asTriple());
+//        }
+//
+//        UpdateRequest request = UpdateFactory.create();
+//        request.add(update);
+//        return request.toString();
+    }
+
+    protected static final void addStmtsToQuadList(List<Statement> statements, String graphUri, QuadDataAcc data) {
+        if (graphUri != null) {
+            Node graphNode = NodeFactory.createURI(graphUri);
+            for (Statement stmt : statements) {
+                data.addQuad(new Quad(graphNode, stmt.asTriple()));
+            }
+        } else {
+            for (Statement stmt : statements) {
+                data.addTriple(stmt.asTriple());
+            }
+        }
     }
 
     /**
