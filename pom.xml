@@ -53,6 +53,7 @@
     <module>rdf-tools.parent</module>
     <module>rdf-tools.rdf</module>
     <module>rdf-tools.sparql</module>
+    <module>rdf-tools.spring-jena</module>
     <module>rdf-tools.stream</module>
     <module>rdf-tools.test</module>
     <module>rdf-tools.test-report</module>
