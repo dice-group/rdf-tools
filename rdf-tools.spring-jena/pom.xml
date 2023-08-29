@@ -12,7 +12,7 @@
   <artifactId>rdf-tools.spring-jena</artifactId>
 
   <properties>
-    <spring.version>6.0.9</spring.version>
+    <spring.version>[6.0.0,7.0.0)</spring.version>
   </properties>
 
   <!-- DEPENDENCIES -->
@@ -22,6 +22,7 @@
       <artifactId>spring-web</artifactId>
       <version>${spring.version}</version>
     </dependency>
+    <!-- ~~~~~~~~~~~~~~~~~~~ Apache Jena ~~~~~~~~~~~~~~~~~~~~~~ -->
     <dependency>
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-base</artifactId>
@@ -30,6 +31,8 @@
       <groupId>org.apache.jena</groupId>
       <artifactId>jena-arq</artifactId>
     </dependency>
+    <!-- ~~~~~~~~~~~~~~~~~~~ End Apache Jena ~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~~~~~~~~~~~~~~~~~~ Testing ~~~~~~~~~~~~~~~~~~~~~~ -->
     <dependency>
       <groupId>org.dice-research</groupId>
       <artifactId>rdf-tools.test</artifactId>
@@ -47,5 +50,6 @@
       <version>${slf4j.version}</version>
       <scope>test</scope>
     </dependency>
+    <!-- ~~~~~~~~~~~~~~~~~~~ End Testing ~~~~~~~~~~~~~~~~~~~~~~ -->
   </dependencies>
 </project>
