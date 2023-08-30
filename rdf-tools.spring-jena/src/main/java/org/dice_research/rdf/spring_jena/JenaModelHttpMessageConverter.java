@@ -204,7 +204,20 @@ public class JenaModelHttpMessageConverter extends AbstractHttpMessageConverter<
      * Factory method that generates a converter that supports all
      * {@link #SUPPORTED_LANGS} that have a mediatype starting with
      * {@code "application/"}. The given {@link Lang} instance will be used as
-     * default.
+     * default. At the time of writing, this could be one of the following:
+     * <ul>
+     * <li>application/ld+json</li>
+     * <li>application/n-quads</li>
+     * <li>application/n-triples</li>
+     * <li>application/rdf+json</li>
+     * <li>application/rdf+protobuf</li>
+     * <li>application/rdf+thrift</li>
+     * <li>application/rdf+xml</li>
+     * <li>application/trig</li>
+     * <li>application/trix+xml</li>
+     * <li>application/trix</li>
+     * <li>application/turtle</li></li>
+     * </ul>
      * 
      * @param defaultLang The default {@link Lang} used for (de-)serialization.
      * @return A new converter for all {@link #SUPPORTED_LANGS} that have a
@@ -217,7 +230,14 @@ public class JenaModelHttpMessageConverter extends AbstractHttpMessageConverter<
     /**
      * Factory method that generates a converter that supports all
      * {@link #SUPPORTED_LANGS} that have a mediatype starting with {@code "text/"}.
-     * The given {@link Lang} instance will be used as default.
+     * The given {@link Lang} instance will be used as default. At the time of
+     * writing, this could be one of the following:
+     * <ul>
+     * <li>text/n-quads</li>
+     * <li>text/plain</li>
+     * <li>text/trig</li>
+     * <li>text/turtle</li>
+     * </ul>
      * 
      * @param defaultLang The default {@link Lang} used for (de-)serialization.
      * @return A new converter for all {@link #SUPPORTED_LANGS} that have a
@@ -225,6 +245,24 @@ public class JenaModelHttpMessageConverter extends AbstractHttpMessageConverter<
      */
     public static JenaModelHttpMessageConverter createForTextMediaTypes(Lang defaultLang) {
         return create(defaultLang, "text/.*", SUPPORTED_LANGS);
+    }
+
+    /**
+     * Factory method that generates a converter that supports all
+     * {@link #SUPPORTED_LANGS} that have a mediatype starting with {@code "x/"}.
+     * The given {@link Lang} instance will be used as default. At the time of
+     * writing, this could be one of the following:
+     * <ul>
+     * <li>x/ld-json-10</li>
+     * <li>x/ld-json-11</li>
+     * </ul>
+     * 
+     * @param defaultLang The default {@link Lang} used for (de-)serialization.
+     * @return A new converter for all {@link #SUPPORTED_LANGS} that have a
+     *         mediatype starting with {@code "text/"}.
+     */
+    public static JenaModelHttpMessageConverter createForUserDefinedMediaTypes(Lang defaultLang) {
+        return create(defaultLang, "x/.*", SUPPORTED_LANGS);
     }
 
 }
