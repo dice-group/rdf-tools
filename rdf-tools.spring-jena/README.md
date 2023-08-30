@@ -2,7 +2,7 @@
 
 This library creates a bridge between the Jena and Spring libraries.
 
-The current implementation supports the serialization and de-serialization of instances of classes that support the Model interface.
+The current implementation supports the serialization and de-serialization of instances of classes that implement the Model interface.
 
 ## Usage in a project
 
@@ -49,7 +49,7 @@ public class MyConfiguration {
 3. Annotate your web methods to consume and/or produce the MIME types that you would like to support:
 ```java
 @PostMapping(value = "/my-method", consumes = { "text/turtle" }, produces = { "text/turtle" })
-    public ResponseEntity<Model> myMethod(@RequestBody Model request) {
+    public Model myMethod(@RequestBody Model request) {
         Model result = null;
         // Create a result model based on the data of the request
         return result;
