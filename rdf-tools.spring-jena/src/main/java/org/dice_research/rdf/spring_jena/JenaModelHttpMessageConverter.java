@@ -81,7 +81,13 @@ public class JenaModelHttpMessageConverter extends AbstractHttpMessageConverter<
         if (clazz == null) {
             return false;
         }
-        // Check if the class implements the Model interface
+        // If the given class is the Model interface (typically the case if we want to
+        // read data)
+        if (Model.class.equals(clazz)) {
+            return true;
+        }
+        // Check if the given class implements the Model interface /(typically the case
+        // if we want to write data)
         return Stream.of(clazz.getInterfaces()).filter(c -> Model.class.equals(c)).findFirst().isPresent();
     }
 
