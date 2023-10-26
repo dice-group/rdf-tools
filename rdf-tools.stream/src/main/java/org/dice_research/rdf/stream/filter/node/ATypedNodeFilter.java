@@ -81,9 +81,9 @@ public abstract class ATypedNodeFilter extends ANodeFilter implements Predicate<
             return checkURI((Node_URI) n);
         } else if (n.isVariable()) {
             return checkVariable((Node_Variable) n);
-        } else if (n.isVariable()) {
+        } else if (n.isLiteral()) {
             return checkLiteral((Node_Literal) n);
-        } else if (n.isVariable()) {
+        } else if (n.isNodeTriple()) {
             return checkTriple((Node_Triple) n);
         } else {
             throw new IllegalStateException(
