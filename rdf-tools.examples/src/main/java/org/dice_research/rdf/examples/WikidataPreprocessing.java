@@ -1,11 +1,14 @@
 package org.dice_research.rdf.examples;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Writer;
+import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.jena.graph.Node;
@@ -19,6 +22,7 @@ import org.apache.jena.system.progress.ProgressMonitor;
 import org.apache.jena.system.progress.ProgressMonitorOutput;
 import org.apache.jena.system.progress.ProgressStreamRDF;
 import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 import org.dice_research.rdf.stream.filter.NodeFilterBasedTripleFilter;
 import org.dice_research.rdf.stream.filter.PropertyBasedTripleFilter;
 import org.dice_research.rdf.stream.filter.RDFStreamTripleFilter;
@@ -41,11 +45,13 @@ public class WikidataPreprocessing {
 
     private static final String WDT_P31_IRI = "http://www.wikidata.org/prop/direct/P31";
     private static final Node RDF_TYPE_NODE = RDF.type.asNode();
+    private static final Node RDFS_LABEL_NODE = RDFS.label.asNode();
     private static final String[] ACCEPTED_ENTITY_NAMESPACES = { "http://www.wikidata.org/entity/" };
     private static final String[] ACCEPTED_PROPERTY_NAMESPACES = { "http://www.wikidata.org/prop/direct/" };
+    private static final String ACCEPTED_LANGUAGE = "en";
 
     public void run(String inputFile, String outputFile) throws FileNotFoundException, IOException {
-        try (Writer out1 = new FileWriter(outputFile)) {
+        try (OutputStream out1 = openStream(outputFile)) {
             // Create stream starting from the end!
             StreamRDF outStream = StreamRDFLib.writer(out1);
             ProgressMonitor monitor1 = new ProgressMonitorOutput("Added triples", 100000, 10,
@@ -60,13 +66,27 @@ public class WikidataPreprocessing {
             // Write all triples except wdt:P31 triples to the output
             stream = new RDFStreamTripleFilter(new PropertyBasedTripleFilter(WDT_P31_IRI), stream, outStream);
 
-            // Only use triples which have a subject and object of the wd namespace and a
+            // Only use triples which have an object of the wd namespace and a
             // property of the wdt namespace.
+            stream = new RDFStreamTripleFilter(new NodeFilterBasedTripleFilter(null,
+                    new StringBasedNamespaceNodeFilter(ACCEPTED_PROPERTY_NAMESPACES),
+                    new StringBasedNamespaceNodeFilter(ACCEPTED_ENTITY_NAMESPACES)), stream);
+
+            // Only use triples which define the English RDFS label.
+            StreamRDF labelStream = new RDFStreamTripleFilter(
+                    new NodeFilterBasedTripleFilter(null, n -> RDFS_LABEL_NODE.equals(n),
+                            n -> n.isLiteral() && ACCEPTED_LANGUAGE.equals(n.getLiteralLanguage())),
+                    outStream);
+
+            // Distinguish between IRI objects and other objects
             stream = new RDFStreamTripleFilter(
                     new NodeFilterBasedTripleFilter(new StringBasedNamespaceNodeFilter(ACCEPTED_ENTITY_NAMESPACES),
-                            new StringBasedNamespaceNodeFilter(ACCEPTED_PROPERTY_NAMESPACES),
-                            new StringBasedNamespaceNodeFilter(ACCEPTED_ENTITY_NAMESPACES)),
-                    stream);
+                            null, n -> n.isURI()),
+                    stream, labelStream);
+
+            // Only use triples which have a subject of the wd namespace
+            stream = new RDFStreamTripleFilter(new NodeFilterBasedTripleFilter(
+                    new StringBasedNamespaceNodeFilter(ACCEPTED_ENTITY_NAMESPACES), null, null), stream);
 
             monitor1.start();
             LOGGER.info("Streaming file {}.", inputFile);
@@ -90,6 +110,14 @@ public class WikidataPreprocessing {
             stream.finish();
             LOGGER.info("Finished");
         }
+    }
+
+    protected OutputStream openStream(String outputFile) throws IOException {
+        OutputStream out = new BufferedOutputStream(new FileOutputStream(new File(outputFile)));
+        if (outputFile.endsWith(".gz")) {
+            out = new GZIPOutputStream(out);
+        }
+        return out;
     }
 
     public static void main(String[] args) throws FileNotFoundException, IOException {

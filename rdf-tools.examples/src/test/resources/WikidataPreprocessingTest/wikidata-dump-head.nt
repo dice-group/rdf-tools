@@ -100,3 +100,6 @@
 <http://www.wikidata.org/entity/Q31> <http://www.wikidata.org/prop/direct/P530> <http://www.wikidata.org/entity/Q148> .
 <http://www.wikidata.org/entity/Q31> <http://www.wikidata.org/prop/direct/P31> <http://www.wikidata.org/entity/Q3624078> .
 <http://www.wikidata.org/entity/Q31> <http://www.wikidata.org/prop/direct/P31> <http://www.wikidata.org/entity/Q6256> .
+<http://www.wikidata.org/entity/Q946> <http://www.w3.org/2000/01/rdf-schema#label> "Donald Tusk"@en .
+<http://www.wikidata.org/entity/Q946> <http://www.w3.org/2000/01/rdf-schema#label> "Donald Tusk"@fr .
+<http://www.wikidata.org/entity/Q946> <http://www.w3.org/2000/01/rdf-schema#label> "Donald Tusk"@es .
