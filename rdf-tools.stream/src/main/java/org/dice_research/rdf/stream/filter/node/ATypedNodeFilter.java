@@ -56,20 +56,21 @@ public abstract class ATypedNodeFilter extends ANodeFilter implements Predicate<
     /**
      * Constructor.
      * 
-     * @param returnValue              The value that is returned in case the two
-     *                                 nodes are equal. Else, its inverse is
-     *                                 returned.
-     * @param checkValueUncoveredTypes The value that is used as check result for
-     *                                 types that are not covered by implementations
-     *                                 of this abstract class. If this is
-     *                                 {@code true} {@code returnValue} is returned
-     *                                 for nodes that are handled by the default
-     *                                 implementations. If it is set to
-     *                                 {@code false} {@code !returnValue} is
-     *                                 returned
+     * @param returnValue               The value that is returned in case the test
+     *                                  succeeds. Else, its inverse is returned.
+     * @param returnValueUncoveredTypes The value that is used as check result for
+     *                                  types that are not covered by
+     *                                  implementations of this abstract class or if
+     *                                  the node to check is {@code null}.
      */
-    public ATypedNodeFilter(boolean returnValue, boolean checkValueUncoveredTypes) {
-        this.returnValue = returnValue;
+    public ATypedNodeFilter(boolean returnValue, boolean returnValueUncoveredTypes) {
+        super(returnValue, returnValueUncoveredTypes);
+        if(returnValue) {
+            this.returnValueUncoveredTypes = returnValueUncoveredTypes;
+        } else {
+            // We have to invert this value, since it will be inverted later on again...
+            this.returnValueUncoveredTypes = !returnValueUncoveredTypes;
+        }
     }
 
     protected boolean check(Node n) {

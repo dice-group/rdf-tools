@@ -1,6 +1,7 @@
 package org.dice_research.rdf.stream.filter.node;
 
 import org.apache.jena.graph.Node_URI;
+import org.dice_research.java.stream.PredicateHelper;
 
 /**
  * A node filter that returns the given boolean value ({@code true} by default)
@@ -34,23 +35,32 @@ public class StringBasedNamespaceNodeFilter extends ATypedNodeFilter {
      * Constructor.
      * 
      * @param example     Node that is used for comparison.
-     * @param returnValue The value that is returned in case the two nodes are
-     *                    equal. Else, its inverse is returned
+     * @param returnValue The value that is returned in case the checked IRI belongs
+     *                    to one of the given namespaces
      */
     public StringBasedNamespaceNodeFilter(boolean returnValue, String... namespaces) {
-        super(returnValue);
+        this(returnValue, !returnValue, namespaces);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param example           Node that is used for comparison.
+     * @param returnValue       The value that is returned in case the checked IRI
+     *                          belongs to one of the given namespaces. Else, its
+     *                          inverse is returned
+     * @param nonIriReturnValue The value that is returned in case the given node is
+     *                          not an IRI.
+     */
+    public StringBasedNamespaceNodeFilter(boolean returnValue, boolean nonIriReturnValue, String... namespaces) {
+        super(returnValue, nonIriReturnValue);
         this.namespaces = namespaces;
     }
 
     @Override
     protected boolean checkURI(Node_URI n) {
         String iri = n.getURI();
-        for (int i = 0; i < namespaces.length; ++i) {
-            if (iri.startsWith(namespaces[i])) {
-                return true;
-            }
-        }
-        return false;
+        return PredicateHelper.startsWithAny(iri, namespaces);
     }
 
 }

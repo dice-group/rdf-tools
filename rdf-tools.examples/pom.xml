@@ -28,6 +28,10 @@
   <dependencies>
     <dependency>
       <groupId>org.dice-research</groupId>
+      <artifactId>rdf-tools.rdf</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.dice-research</groupId>
       <artifactId>rdf-tools.stream</artifactId>
     </dependency>
     <dependency>
@@ -49,6 +53,11 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
       <version>2.13.3</version>
+    </dependency>
+    <!-- SPARQL API library -->
+    <dependency>
+      <groupId>org.aksw.jenax</groupId>
+      <artifactId>jenax-rx-dataaccess</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
